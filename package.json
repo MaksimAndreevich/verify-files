@@ -1,9 +1,14 @@
 {
   "name": "validate-font-files",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Checking file compatibility for the repository",
-  "main": "index.js",
+  "main": "main.ts",
   "scripts": {
+    "start": "node ./dist/main.js",
+    "dev": "nodemon",
+    "build": "tsc",
+    "lint": "eslint ./src/**",
+    "lint:fix": "eslint ./src/** --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +27,14 @@
   "bugs": {
     "url": "https://github.com/MaksimAndreevich/validate-font-files/issues"
   },
-  "homepage": "https://github.com/MaksimAndreevich/validate-font-files#readme"
+  "homepage": "https://github.com/MaksimAndreevich/validate-font-files#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.4"
+  }
 }
