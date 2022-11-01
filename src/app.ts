@@ -1,8 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import { LoggerService } from './logger/logger.service';
+import { ILogger } from './logger/logger.service.interface';
 import { IDirectoryFiles } from './types';
 
 export class App {
+	private logger: ILogger;
+
+	constructor() {
+		this.logger = new LoggerService();
+	}
+
 	getAllFiles(dir: string, files_?: IDirectoryFiles): IDirectoryFiles {
 		files_ = files_ || {};
 		const allFiles = fs.readdirSync(dir);
@@ -41,10 +49,13 @@ export class App {
 
 	createFontListFile(): void {
 		const fileContent = this.getParticularFiles(['js', 'ts']);
-		const filePath = 'fontsList.json';
-
-		fs.writeFile(filePath, JSON.stringify(fileContent), (err) => {
-			if (err) throw err;
-		});
+		const filePath = 'fontsList.jsn';
+		try {
+			fs.writeFile(filePath, JSON.stringify(fileContent), (err) => {
+				this.logger.log(`File ${filePath} was successfully created`);
+			});
+		} catch (error) {
+			this.logger.error(`Error during creation ${filePath}`);
+		}
 	}
 }
