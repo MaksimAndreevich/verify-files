@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { getArgsCommandLine } from './helpers/args';
 import { LoggerService } from './logger/logger.service';
 import { ILogger } from './logger/logger.service.interface';
 import { IDirectoryFiles } from './types';
@@ -9,6 +10,10 @@ export class App {
 
 	constructor() {
 		this.logger = new LoggerService();
+	}
+
+	init(): void {
+		const args = getArgsCommandLine(process.argv);
 	}
 
 	getAllFiles(dir: string, files_?: IDirectoryFiles): IDirectoryFiles {
