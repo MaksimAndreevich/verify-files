@@ -6,6 +6,7 @@
 	"bin": {
 		"verify-fonts": "main.ts"
 	},
+	"private": "true",
 	"scripts": {
 		"start": "node ./dist/main.js",
 		"dev": "nodemon",
@@ -46,6 +47,7 @@
 	},
 	"dependencies": {
 		"chalk": "4.1.2",
+		"crypto": "^1.0.1",
 		"dedent-js": "^1.0.1",
 		"tslog": "^3.3.4"
 	}

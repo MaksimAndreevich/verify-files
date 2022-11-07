@@ -17,10 +17,13 @@ export class App {
 		const args = getArgsCommandLine(process.argv);
 
 		if (args.h) {
-			this.printHelp();
+			return this.printHelp();
 		}
 		if (args.c) {
 			// set config with whitelist
+		}
+		if (args.f) {
+			return this.createFontListFile();
 		}
 		if (args.v) {
 			// verify whitelist
@@ -33,5 +36,9 @@ export class App {
 
 	printHelp(): void {
 		this.logger.printHelp();
+	}
+
+	initConfig(): void {
+		//config
 	}
 }
