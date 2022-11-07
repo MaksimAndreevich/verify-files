@@ -15,9 +15,23 @@ export class App {
 
 	init(): void {
 		const args = getArgsCommandLine(process.argv);
+
+		if (args.h) {
+			this.printHelp();
+		}
+		if (args.c) {
+			// set config with whitelist
+		}
+		if (args.v) {
+			// verify whitelist
+		}
 	}
 
 	createFontListFile(): void {
 		this.fileManagementServise.createFontListFile();
+	}
+
+	printHelp(): void {
+		this.logger.printHelp();
 	}
 }
