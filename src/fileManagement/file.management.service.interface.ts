@@ -18,4 +18,7 @@ export interface IFileManagementService {
 
 	/** Created fontList.json in root folder */
 	createFontListFile: () => void;
+
+	/** Generate a whitelist in the config */
+	createWhiteList: () => void;
 }

@@ -83,4 +83,22 @@ export class FileManagementService implements IFileManagementService {
 			});
 		});
 	}
+
+	createWhiteList(): void {
+		const rawCurrentConfig = fs.readFileSync('verify-fonts.config.json');
+		const currentConfig = JSON.parse(rawCurrentConfig.toString());
+
+		//TODO: get from config 'fontsList.json'
+		const rawWhiteList = fs.readFileSync('fontsList.json');
+		const whiteList = JSON.parse(rawWhiteList.toString());
+
+		const newConfig = Object.assign(currentConfig, { whiteList });
+
+		fs.writeFile('verify-fonts.config.json', JSON.stringify(newConfig), (err) => {
+			if (err) {
+				return this.logger.error(`Error when creating a white list ${err}`);
+			}
+			this.logger.log(`"White list added. Config update successfully `);
+		});
+	}
 }

@@ -33,7 +33,8 @@ export class LoggerService {
 			${chalk.bold('-h')}               	Print help
 			${chalk.bold('-c [path/conf.js]')} 	Set config file with yout white list. See REAME.md
 			${chalk.bold('-s')} 			Search for all font files and create fontsList.json
-			${chalk.bold('-v')} 			Verify your font files with your white list`,
+			${chalk.bold('-v')} 			Verify your font files with your white list
+			${chalk.bold('-g')} 			Generate a whitelist in the config`,
 			),
 		);
 	}

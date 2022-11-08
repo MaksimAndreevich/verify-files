@@ -28,6 +28,10 @@ export class App {
 		if (args.v) {
 			// verify whitelist
 		}
+		if (args.g) {
+			//generate whitelist in the config
+			this.generateWhiteList();
+		}
 	}
 
 	createFontListFile(): void {
@@ -40,5 +44,9 @@ export class App {
 
 	initConfig(): void {
 		//config
+	}
+
+	generateWhiteList(): void {
+		this.fileManagementServise.createWhiteList();
 	}
 }
