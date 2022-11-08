@@ -27,13 +27,8 @@ export class FileManagementService implements IFileManagementService {
 			if (fs.statSync(path).isDirectory()) {
 				this.getAllFiles(path, files_);
 			} else {
-				const hash = await this.generateChecksum(path)
-					.then((hash) => hash)
-					.catch((err) => this.logger.error(err));
-
 				files_[filteredFiles[i]] = {
 					path: path,
-					checksum: hash as string,
 				};
 			}
 		}
@@ -53,7 +48,11 @@ export class FileManagementService implements IFileManagementService {
 				}
 			}
 		}
-		console.log(result);
+
+		// add checksum
+		for (const fileName in result) {
+			result[fileName].checksum = await this.generateChecksum(result[fileName].path);
+		}
 
 		return result;
 	}

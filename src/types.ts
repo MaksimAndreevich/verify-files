@@ -3,7 +3,7 @@ import { BinaryToTextEncoding } from 'crypto';
 export interface IDirectoryFiles {
 	[key: string]: {
 		path: string;
-		checksum: string;
+		checksum?: string;
 	};
 }
 
