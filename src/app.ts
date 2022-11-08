@@ -1,14 +1,18 @@
-import { FileManagementService } from './fileManagement/file.management.service';
-import { IFileManagementService } from './fileManagement/file.management.service.interface';
 import { getArgsCommandLine } from './helpers/args';
-import { LoggerService } from './logger/logger.service';
-import { ILogger } from './logger/logger.service.interface';
+import { ConfigService } from './services/configService/cofig.service';
+import { IConfigService } from './services/configService/cofig.service.interface';
+import { FileManagementService } from './services/fileManagement/file.management.service';
+import { IFileManagementService } from './services/fileManagement/file.management.service.interface';
+import { LoggerService } from './services/logger/logger.service';
+import { ILogger } from './services/logger/logger.service.interface';
 
 export class App {
 	private logger: ILogger;
 	private fileManagementServise: IFileManagementService;
+	private configService: IConfigService;
 
 	constructor() {
+		this.configService = new ConfigService();
 		this.logger = new LoggerService();
 		this.fileManagementServise = new FileManagementService(this.logger);
 	}
@@ -20,10 +24,13 @@ export class App {
 			return this.printHelp();
 		}
 		if (args.c) {
-			// set config with whitelist
+			if (typeof args.c === 'boolean') {
+				return this.logger.warn('Please enter the path to your config file. -c [path/config.json]');
+			}
+			this.configService.setConfig(args.c);
 		}
 		if (args.s) {
-			return this.createFontListFile();
+			return this.createListFile();
 		}
 		if (args.v) {
 			// verify whitelist
@@ -34,8 +41,8 @@ export class App {
 		}
 	}
 
-	createFontListFile(): void {
-		this.fileManagementServise.createFontListFile();
+	createListFile(): void {
+		this.fileManagementServise.createListFilesDefinedExtension();
 	}
 
 	printHelp(): void {

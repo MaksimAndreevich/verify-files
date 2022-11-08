@@ -1,12 +1,16 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { IConfigeFile, IDirectoryFiles } from '../../types';
 import { ILogger } from '../logger/logger.service.interface';
-import { IDirectoryFiles } from '../types';
 import { IFileManagementService } from './file.management.service.interface';
 
 export class FileManagementService implements IFileManagementService {
-	constructor(private logger: ILogger) {}
+	// configService: IConfigService;
+
+	constructor(private logger: ILogger) {
+		// this.configService = new ConfigService();
+	}
 
 	async getAllFiles(dir: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
 		files_ = files_ || {};
@@ -15,13 +19,12 @@ export class FileManagementService implements IFileManagementService {
 			// TODO: refactor and in helpers (filter), get arr from config
 			.filter((file) => file != 'node_modules')
 			.filter((file) => file != '.git')
-			.filter((file) => file != '.dist');
+			.filter((file) => file != 'dist');
 
 		for (const i in filteredFiles) {
 			const path = dir + '/' + filteredFiles[i];
-			const statsFile = fs.statSync(path);
 
-			if (statsFile.isDirectory()) {
+			if (fs.statSync(path).isDirectory()) {
 				this.getAllFiles(path, files_);
 			} else {
 				const hash = await this.generateChecksum(path)
@@ -50,16 +53,18 @@ export class FileManagementService implements IFileManagementService {
 				}
 			}
 		}
+		console.log(result);
+
 		return result;
 	}
 
-	async createFontListFile(): Promise<void> {
-		// TODO: get from config. replaсe  ['js', 'ts'] with extensions fonts after test
-		const fileContent = await this.getParticularFiles(['js', 'ts', 'jpeg']);
+	async createListFilesDefinedExtension(): Promise<void> {
+		// const fileExtensions = this.configService.fileExtensions;
+		const fileContent = await this.getParticularFiles(['js', 'ts']);
 		const filePath = 'fontsList.json';
 
 		try {
-			fs.writeFile(filePath, JSON.stringify(fileContent), (err) => {
+			this.createFile(filePath, JSON.stringify(fileContent), (err) => {
 				this.logger.log(`File ${filePath} was successfully created`);
 			});
 		} catch (error) {
@@ -85,8 +90,8 @@ export class FileManagementService implements IFileManagementService {
 	}
 
 	createWhiteList(): void {
-		const rawCurrentConfig = fs.readFileSync('verify-fonts.config.json');
-		const currentConfig = JSON.parse(rawCurrentConfig.toString());
+		//TODO: get from config path 'verify-fonts.config.json'
+		const currentConfig = this.getCurrentConfig('verify-fonts.config.json');
 
 		//TODO: get from config 'fontsList.json'
 		const rawWhiteList = fs.readFileSync('fontsList.json');
@@ -94,11 +99,25 @@ export class FileManagementService implements IFileManagementService {
 
 		const newConfig = Object.assign(currentConfig, { whiteList });
 
-		fs.writeFile('verify-fonts.config.json', JSON.stringify(newConfig), (err) => {
+		this.createFile('verify-fonts.config.json', JSON.stringify(newConfig), (err) => {
 			if (err) {
 				return this.logger.error(`Error when creating a white list ${err}`);
 			}
 			this.logger.log(`"White list added. Config update successfully `);
 		});
+	}
+
+	getCurrentConfig(path: string): IConfigeFile {
+		const rawCurrentConfig = fs.readFileSync(path);
+		const currentConfig = JSON.parse(rawCurrentConfig.toString());
+		return currentConfig;
+	}
+
+	createFile(
+		path: string,
+		data: string | NodeJS.ArrayBufferView,
+		callback: fs.NoParamCallback,
+	): void {
+		fs.writeFile(path, data, callback);
 	}
 }

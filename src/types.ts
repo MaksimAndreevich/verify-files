@@ -1,3 +1,5 @@
+import { BinaryToTextEncoding } from 'crypto';
+
 export interface IDirectoryFiles {
 	[key: string]: {
 		path: string;
@@ -7,4 +9,13 @@ export interface IDirectoryFiles {
 
 export interface IArgsCommandLine {
 	[key: string]: boolean | string;
+}
+
+export interface IConfigeFile {
+	fileExtensions: string[];
+	exclusionFolders: string[];
+	algorithm: string;
+	encoding: BinaryToTextEncoding;
+	whiteList: IDirectoryFiles;
+	[key: string]: string | Array<string> | IDirectoryFiles;
 }

@@ -1,4 +1,5 @@
-import { IDirectoryFiles } from '../types';
+import { NoParamCallback } from 'fs';
+import { IConfigeFile, IDirectoryFiles } from '../../types';
 
 export interface IFileManagementService {
 	/**
@@ -17,8 +18,18 @@ export interface IFileManagementService {
 	getParticularFiles: (fileExtensions: string[]) => Promise<IDirectoryFiles>;
 
 	/** Created fontList.json in root folder */
-	createFontListFile: () => void;
+	createListFilesDefinedExtension: () => Promise<void>;
 
 	/** Generate a whitelist in the config */
 	createWhiteList: () => void;
+
+	/** Returns the configuration file at the specified path */
+	getCurrentConfig: (path: string) => IConfigeFile;
+
+	/** Create file */
+	createFile: (
+		path: string,
+		data: string | NodeJS.ArrayBufferView,
+		callback: NoParamCallback,
+	) => void;
 }
