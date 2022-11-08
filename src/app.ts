@@ -22,7 +22,7 @@ export class App {
 		if (args.c) {
 			// set config with whitelist
 		}
-		if (args.f) {
+		if (args.s) {
 			return this.createFontListFile();
 		}
 		if (args.v) {

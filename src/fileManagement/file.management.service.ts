@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { ILogger } from '../logger/logger.service.interface';
@@ -7,30 +8,39 @@ import { IFileManagementService } from './file.management.service.interface';
 export class FileManagementService implements IFileManagementService {
 	constructor(private logger: ILogger) {}
 
-	getAllFiles(dir: string, files_?: IDirectoryFiles): IDirectoryFiles {
+	async getAllFiles(dir: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
 		files_ = files_ || {};
 		const allFiles = fs.readdirSync(dir);
-		const files = allFiles
-			// TODO: refactor and in helpers (filter)
+		const filteredFiles = allFiles
+			// TODO: refactor and in helpers (filter), get arr from config
 			.filter((file) => file != 'node_modules')
 			.filter((file) => file != '.git')
 			.filter((file) => file != '.dist');
 
-		for (const i in files) {
-			const name = dir + '/' + files[i];
-			if (fs.statSync(name).isDirectory()) {
-				this.getAllFiles(name, files_);
+		for (const i in filteredFiles) {
+			const path = dir + '/' + filteredFiles[i];
+			const statsFile = fs.statSync(path);
+
+			if (statsFile.isDirectory()) {
+				this.getAllFiles(path, files_);
 			} else {
-				files_[files[i]] = name;
+				const hash = await this.generateChecksum(path)
+					.then((hash) => hash)
+					.catch((err) => this.logger.error(err));
+
+				files_[filteredFiles[i]] = {
+					path: path,
+					checksum: hash as string,
+				};
 			}
 		}
 		return files_;
 	}
 
-	getParticularFiles(fileExtensions: string[]): IDirectoryFiles {
+	async getParticularFiles(fileExtensions: string[]): Promise<IDirectoryFiles> {
 		const result: IDirectoryFiles = {};
 		const rootRepository = path.resolve();
-		const allFiles = this.getAllFiles(rootRepository);
+		const allFiles = await this.getAllFiles(rootRepository);
 
 		//TODO: in helpers (for)
 		for (let i = 0; i <= fileExtensions.length; i++) {
@@ -43,10 +53,11 @@ export class FileManagementService implements IFileManagementService {
 		return result;
 	}
 
-	createFontListFile(): void {
-		// TODO: replaсe  ['js', 'ts'] with extensions fonts after test
-		const fileContent = this.getParticularFiles(['js', 'ts']);
+	async createFontListFile(): Promise<void> {
+		// TODO: get from config. replaсe  ['js', 'ts'] with extensions fonts after test
+		const fileContent = await this.getParticularFiles(['js', 'ts', 'jpeg']);
 		const filePath = 'fontsList.json';
+
 		try {
 			fs.writeFile(filePath, JSON.stringify(fileContent), (err) => {
 				this.logger.log(`File ${filePath} was successfully created`);
@@ -54,5 +65,22 @@ export class FileManagementService implements IFileManagementService {
 		} catch (error) {
 			this.logger.error(`Error during creation ${filePath}`);
 		}
+	}
+
+	generateChecksum(path: string): Promise<string> {
+		return new Promise((resolve, reject) => {
+			// TODO: get algorith from config
+			const hash = crypto.createHash('md5');
+			const input = fs.createReadStream(path);
+
+			input.on('error', reject);
+			input.on('data', (chunk) => {
+				hash.update(chunk);
+			});
+			input.on('close', () => {
+				//TODO: get encoding from cofig (BinaryToTextEncoding "base64" | "base64url" | "hex" | "binary")
+				resolve(hash.digest('hex'));
+			});
+		});
 	}
 }

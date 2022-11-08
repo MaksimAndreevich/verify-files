@@ -1,3 +1,6 @@
 {
-	"fileExtensions": ["js", "ts"]
+	"fileExtensions": ["js", "ts"],
+	"exclusionFolders": ["node_modules", ".git", ".dist"],
+	"algorithm": "md5",
+	"encoding": "hex"
 }

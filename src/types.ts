@@ -1,5 +1,8 @@
 export interface IDirectoryFiles {
-	[key: string]: string;
+	[key: string]: {
+		path: string;
+		checksum: string;
+	};
 }
 
 export interface IArgsCommandLine {
