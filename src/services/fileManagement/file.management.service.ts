@@ -1,16 +1,18 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { IConfigeFile, IDirectoryFiles } from '../../types';
+import { IDirectoryFiles } from '../../types';
+import { ConfigService } from '../configService/cofig.service';
+import { IConfigService } from '../configService/cofig.service.interface';
+import { LoggerService } from '../logger/logger.service';
 import { ILogger } from '../logger/logger.service.interface';
 import { IFileManagementService } from './file.management.service.interface';
 
 export class FileManagementService implements IFileManagementService {
-	// configService: IConfigService;
-
-	constructor(private logger: ILogger) {
-		// this.configService = new ConfigService();
-	}
+	constructor(
+		private configService: IConfigService = new ConfigService(),
+		private logger: ILogger = new LoggerService(),
+	) {}
 
 	async getAllFiles(dir: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
 		files_ = files_ || {};
@@ -59,7 +61,7 @@ export class FileManagementService implements IFileManagementService {
 
 	async createListFilesDefinedExtension(): Promise<void> {
 		// const fileExtensions = this.configService.fileExtensions;
-		const fileContent = await this.getParticularFiles(['js', 'ts']);
+		const fileContent = await this.getParticularFiles(['js', 'json']);
 		const filePath = 'fontsList.json';
 
 		try {
@@ -89,27 +91,20 @@ export class FileManagementService implements IFileManagementService {
 	}
 
 	createWhiteList(): void {
-		//TODO: get from config path 'verify-fonts.config.json'
-		const currentConfig = this.getCurrentConfig('verify-fonts.config.json');
+		const currentConfig = this.configService.getCurrentConfig();
+		if (!currentConfig) return;
 
-		//TODO: get from config 'fontsList.json'
-		const rawWhiteList = fs.readFileSync('fontsList.json');
+		const rawWhiteList = fs.readFileSync(this.configService.fontsListPath);
 		const whiteList = JSON.parse(rawWhiteList.toString());
 
 		const newConfig = Object.assign(currentConfig, { whiteList });
 
-		this.createFile('verify-fonts.config.json', JSON.stringify(newConfig), (err) => {
+		this.createFile(this.configService.configPath, JSON.stringify(newConfig), (err) => {
 			if (err) {
 				return this.logger.error(`Error when creating a white list ${err}`);
 			}
 			this.logger.log(`"White list added. Config update successfully `);
 		});
-	}
-
-	getCurrentConfig(path: string): IConfigeFile {
-		const rawCurrentConfig = fs.readFileSync(path);
-		const currentConfig = JSON.parse(rawCurrentConfig.toString());
-		return currentConfig;
 	}
 
 	createFile(

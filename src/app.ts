@@ -14,20 +14,18 @@ export class App {
 	constructor() {
 		this.configService = new ConfigService();
 		this.logger = new LoggerService();
-		this.fileManagementServise = new FileManagementService(this.logger);
+		this.fileManagementServise = new FileManagementService();
 	}
 
 	init(): void {
 		const args = getArgsCommandLine(process.argv);
+		this.configService.init();
 
 		if (args.h) {
 			return this.printHelp();
 		}
 		if (args.c) {
-			if (typeof args.c === 'boolean') {
-				return this.logger.warn('Please enter the path to your config file. -c [path/config.json]');
-			}
-			this.configService.setConfig(args.c);
+			this.configService.createConfig();
 		}
 		if (args.s) {
 			return this.createListFile();

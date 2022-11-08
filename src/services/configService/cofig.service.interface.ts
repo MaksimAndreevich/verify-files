@@ -1,9 +1,9 @@
 import { BinaryToTextEncoding } from 'crypto';
-import { IDirectoryFiles } from '../../types';
+import { IConfigeFile, IDirectoryFiles } from '../../types';
 
 export interface IConfigService {
 	fontsListPath: string;
-	configPath: string | null;
+	configPath: string;
 	fileExtensions: string[];
 	exclusionFolders: string[];
 	algorithmCrypto: string;
@@ -11,6 +11,8 @@ export interface IConfigService {
 	whiteList: IDirectoryFiles | null;
 
 	init: () => void;
-	setConfig: (path: string) => void;
+	createConfig: () => void;
 	generateDefaultConfig: () => void;
+	getCurrentConfig: () => IConfigeFile | void;
+	hasConfig: () => Promise<boolean>;
 }

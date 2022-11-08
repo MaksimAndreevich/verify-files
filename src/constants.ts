@@ -1,5 +1,5 @@
 export const DEFAULT_CONFIG = {
-	fileExtensions: ['js', 'ts'],
+	fileExtensions: ['json', 'ts'],
 	exclusionFolders: ['node_modules', '.git', '.dist'],
 	algorithm: 'md5',
 	encoding: 'hex',

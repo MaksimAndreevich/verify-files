@@ -1,7 +1,1 @@
-{
-	"fileExtensions": ["js", "ts"],
-	"exclusionFolders": ["node_modules", ".git", ".dist"],
-	"algorithm": "md5",
-	"encoding": "hex",
-	"whiteList": {}
-}
+{"fileExtensions":["json","js"],"exclusionFolders":["node_modules",".git",".dist"],"algorithm":"md5","encoding":"hex","whiteList":{"settings.json":{"path":"/Users/maksimefimov/Work/validate-font-files/.vscode/settings.json","checksum":"f212f060eb7a3aceeb2255c5f8740fce"},"fontsList.json":{"path":"/Users/maksimefimov/Work/validate-font-files/fontsList.json","checksum":"388f6f60b2efa72bb05f0b589c6ca0cf"},"nodemon.json":{"path":"/Users/maksimefimov/Work/validate-font-files/nodemon.json","checksum":"2fce79f962f11f936fc058ba5bc4f7b7"},"package-lock.json":{"path":"/Users/maksimefimov/Work/validate-font-files/package-lock.json","checksum":"530a1faf51b51c752dd49a634a57422b"},"package.json":{"path":"/Users/maksimefimov/Work/validate-font-files/package.json","checksum":"96bbc8d2cf5984d56a7e3545c366aa89"},"tsconfig.json":{"path":"/Users/maksimefimov/Work/validate-font-files/tsconfig.json","checksum":"c9f4c6fdfea509b931b0d4baaf4a54a3"},"verify-files.config.json":{"path":"/Users/maksimefimov/Work/validate-font-files/verify-files.config.json","checksum":"626d60c218ded5da8c1b130ffe54a7df"}}}

@@ -1,5 +1,5 @@
 import { NoParamCallback } from 'fs';
-import { IConfigeFile, IDirectoryFiles } from '../../types';
+import { IDirectoryFiles } from '../../types';
 
 export interface IFileManagementService {
 	/**
@@ -22,9 +22,6 @@ export interface IFileManagementService {
 
 	/** Generate a whitelist in the config */
 	createWhiteList: () => void;
-
-	/** Returns the configuration file at the specified path */
-	getCurrentConfig: (path: string) => IConfigeFile;
 
 	/** Create file */
 	createFile: (
