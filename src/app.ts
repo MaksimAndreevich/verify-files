@@ -19,36 +19,16 @@ export class App {
 
 	init(): void {
 		const args = getArgsCommandLine(process.argv);
-		this.configService.init();
+		if (args.h) return this.printHelp();
+		if (args.g) return this.generateWhiteList();
 
-		if (args.h) {
-			return this.printHelp();
-		}
-		if (args.c) {
-			this.configService.createConfig();
-		}
-		if (args.s) {
-			return this.createListFile();
-		}
 		if (args.v) {
 			// verify whitelist
 		}
-		if (args.g) {
-			//generate whitelist in the config
-			this.generateWhiteList();
-		}
-	}
-
-	createListFile(): void {
-		this.fileManagementServise.createListFilesDefinedExtension();
 	}
 
 	printHelp(): void {
 		this.logger.printHelp();
-	}
-
-	initConfig(): void {
-		//config
 	}
 
 	generateWhiteList(): void {

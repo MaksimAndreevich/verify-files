@@ -1,5 +1,5 @@
 {
-	"name": "validate-font-files",
+	"name": "validate-files",
 	"version": "0.0.0",
 	"description": "Checking file compatibility for the repository",
 	"main": "main.ts",

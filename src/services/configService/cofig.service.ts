@@ -21,16 +21,17 @@ export class ConfigService implements IConfigService {
 		this.configPath = 'verify-files.config.json';
 	}
 
-	init(): void {
+	init(): IConfigeFile | null {
 		try {
-			this.getCurrentConfig();
+			const rawCurrentConfig = fs.readFileSync(this.configPath);
+			const currentConfig = JSON.parse(rawCurrentConfig.toString());
+			return currentConfig;
 		} catch (error) {
-			this.logger.log(
-				'Аn error occurred while reading the kinfiguration file, try configuring the coniguration file with %verify-files -с ',
-			);
+			return null;
 		}
 	}
 
+	// not used?
 	async createConfig(): Promise<void> {
 		const hasConfig = await this.hasConfig();
 		if (!hasConfig) {
@@ -38,6 +39,8 @@ export class ConfigService implements IConfigService {
 		}
 
 		const config = this.getCurrentConfig();
+
+		if (!config) return;
 
 		this.fileExtensions = config.fileExtensions || [];
 		this.exclusionFolders = config.exclusionFolders || [];
@@ -58,10 +61,16 @@ export class ConfigService implements IConfigService {
 		}
 	}
 
-	getCurrentConfig(): IConfigeFile {
-		const rawCurrentConfig = fs.readFileSync(this.configPath);
-		const currentConfig = JSON.parse(rawCurrentConfig.toString());
-		return currentConfig;
+	getCurrentConfig(): IConfigeFile | void {
+		try {
+			const rawCurrentConfig = fs.readFileSync(this.configPath);
+			const currentConfig = JSON.parse(rawCurrentConfig.toString());
+			return currentConfig;
+		} catch (error) {
+			this.logger.error(
+				`Аn error occurred while reading the konfiguration file verify-files.config.json. Try configuring the coniguration file with $verify-files -i `,
+			);
+		}
 	}
 
 	async hasConfig(): Promise<boolean> {

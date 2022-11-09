@@ -10,7 +10,7 @@ export interface IConfigService {
 	encoding: BinaryToTextEncoding;
 	whiteList: IDirectoryFiles | null;
 
-	init: () => void;
+	init: () => IConfigeFile | null;
 	createConfig: () => void;
 	generateDefaultConfig: () => void;
 	getCurrentConfig: () => IConfigeFile | void;

@@ -1,7 +1,8 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { IDirectoryFiles } from '../../types';
+import { DEFAULT_CONFIG } from '../../constants';
+import { IConfigeFile, IDirectoryFiles } from '../../types';
 import { ConfigService } from '../configService/cofig.service';
 import { IConfigService } from '../configService/cofig.service.interface';
 import { LoggerService } from '../logger/logger.service';
@@ -9,10 +10,15 @@ import { ILogger } from '../logger/logger.service.interface';
 import { IFileManagementService } from './file.management.service.interface';
 
 export class FileManagementService implements IFileManagementService {
+	config: IConfigeFile;
 	constructor(
 		private configService: IConfigService = new ConfigService(),
 		private logger: ILogger = new LoggerService(),
-	) {}
+	) {
+		// TODO: next
+		const currentConfig = this.configService.init();
+		this.config = currentConfig || DEFAULT_CONFIG;
+	}
 
 	async getAllFiles(dir: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
 		files_ = files_ || {};
@@ -53,12 +59,19 @@ export class FileManagementService implements IFileManagementService {
 
 		// add checksum
 		for (const fileName in result) {
-			result[fileName].checksum = await this.generateChecksum(result[fileName].path);
+			result[fileName].checksum = await this.generateChecksum(result[fileName].path).catch(
+				(err) => {
+					this.logger.error(`An error occurred during checksu generation: ${err.message}`);
+					return undefined;
+				},
+			);
+			if (!result[fileName].checksum) break;
 		}
 
 		return result;
 	}
 
+	// dont use?
 	async createListFilesDefinedExtension(): Promise<void> {
 		// const fileExtensions = this.configService.fileExtensions;
 		const fileContent = await this.getParticularFiles(['js', 'json']);
@@ -75,8 +88,7 @@ export class FileManagementService implements IFileManagementService {
 
 	generateChecksum(path: string): Promise<string> {
 		return new Promise((resolve, reject) => {
-			// TODO: get algorith from config
-			const hash = crypto.createHash('md5');
+			const hash = crypto.createHash(this.config.algorithm);
 			const input = fs.createReadStream(path);
 
 			input.on('error', reject);
@@ -84,27 +96,31 @@ export class FileManagementService implements IFileManagementService {
 				hash.update(chunk);
 			});
 			input.on('close', () => {
-				//TODO: get encoding from cofig (BinaryToTextEncoding "base64" | "base64url" | "hex" | "binary")
-				resolve(hash.digest('hex'));
+				resolve(hash.digest(this.config.encoding));
 			});
 		});
 	}
 
-	createWhiteList(): void {
-		const currentConfig = this.configService.getCurrentConfig();
-		if (!currentConfig) return;
+	async createWhiteList(): Promise<void> {
+		if (!this.config) return;
 
-		const rawWhiteList = fs.readFileSync(this.configService.fontsListPath);
-		const whiteList = JSON.parse(rawWhiteList.toString());
+		const whiteList = await this.getParticularFiles(this.config.fileExtensions);
+		const newConfig = Object.assign(this.config, { whiteList });
 
-		const newConfig = Object.assign(currentConfig, { whiteList });
+		for (const fileName in whiteList) {
+			if (!whiteList[fileName].checksum)
+				return this.logger.warn(
+					`Perhaps checksums will be missing from your white list. Check your configuration`,
+				);
+		}
 
 		this.createFile(this.configService.configPath, JSON.stringify(newConfig), (err) => {
 			if (err) {
 				return this.logger.error(`Error when creating a white list ${err}`);
 			}
-			this.logger.log(`"White list added. Config update successfully `);
 		});
+
+		this.logger.log(`White list added. Config update successfully`);
 	}
 
 	createFile(
