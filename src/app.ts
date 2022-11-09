@@ -19,10 +19,12 @@ export class App {
 
 	init(): void {
 		const args = getArgsCommandLine(process.argv);
-		if (args.h) return this.printHelp();
-		if (args.g) return this.generateWhiteList();
+		console.log(args);
 
-		if (args.v) {
+		if (args.h || args['-help']) return this.printHelp();
+		if (args.g || args['-generate']) return this.generateWhiteList();
+
+		if (args.v || args['-verify']) {
 			// verify whitelist
 		}
 	}

@@ -30,11 +30,11 @@ export class LoggerService {
 		console.log(
 			dedent(
 				`${chalk.bgCyan(' HELP ')}
-			${chalk.bold('-h')}               	Print help
-			${chalk.bold('-g')} 			Generate a whitelist in the config. 
-						If there is no configuration file, it will be created automatically. 
-						Then add a list of extensions for your whitelist to it and repeat the command -g
-			${chalk.bold('-v')} 			Verify your files with your white list`,
+			${chalk.bold('-h --help')}               	Print help
+			${chalk.bold('-g --generate')} 			Generate a whitelist in the config. 
+							If there is no configuration file, it will be created automatically. 
+							Then add a list of extensions for your whitelist to it and repeat the command -g
+			${chalk.bold('-v --verify')} 			Verify your files with your white list`,
 			),
 		);
 	}
