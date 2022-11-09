@@ -1,11 +1,5 @@
 import { IArgsCommandLine } from '../types';
 
-// $node ./dist/main.js -h -c [fileName.ex] -v
-// return { h: true, c: 'fileName.ex', v: true }
-// example: -h - help
-//          -c [filehame.ex] - create file
-//          -v - verify
-
 export const getArgsCommandLine = (args: string[]): IArgsCommandLine => {
 	const res: IArgsCommandLine = {};
 	const [execute, file, ...rest] = args;

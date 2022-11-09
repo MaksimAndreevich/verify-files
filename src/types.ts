@@ -1,10 +1,12 @@
 import { BinaryToTextEncoding } from 'crypto';
 
 export interface IDirectoryFiles {
-	[key: string]: {
-		path: string;
-		checksum?: string;
-	};
+	[key: string]: IFileInfo;
+}
+
+export interface IFileInfo {
+	path: string;
+	checksum?: string;
 }
 
 export interface IArgsCommandLine {

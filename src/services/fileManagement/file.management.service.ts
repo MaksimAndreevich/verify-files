@@ -15,7 +15,6 @@ export class FileManagementService implements IFileManagementService {
 		private configService: IConfigService = new ConfigService(),
 		private logger: ILogger = new LoggerService(),
 	) {
-		// TODO: next
 		const currentConfig = this.configService.init();
 		this.config = currentConfig || DEFAULT_CONFIG;
 	}
