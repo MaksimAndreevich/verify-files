@@ -43,12 +43,7 @@ export class VerifyService implements IVerifyService {
 		);
 
 		this.verifySurplus(whiteListConfig, whiteListRepo);
-
-		// for (const file in whiteListConfig) {
-		// 	if (whiteListRepo[file].checksum === whiteListConfig[file].checksum) {
-		// 		console.log(true);
-		// 	}
-		// }
+		this.verifyChecksum(whiteListConfig, whiteListRepo);
 	}
 
 	//TODO: refactoring
@@ -87,7 +82,13 @@ export class VerifyService implements IVerifyService {
 		}
 	}
 
-	verifyChecksum(): void {
-		//
+	verifyChecksum(wlConf: IDirectoryFiles, wlRepo: IDirectoryFiles): void {
+		for (const file in wlConf) {
+			if (wlRepo[file].checksum !== wlConf[file].checksum) {
+				this.logger.warn(
+					`The checksum of file ${file} from your white sheet did not match the checksum of the same file from your repository`,
+				);
+			}
+		}
 	}
 }
