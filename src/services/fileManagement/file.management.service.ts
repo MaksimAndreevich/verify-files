@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { DEFAULT_CONFIG } from '../../constants';
+import { excludeFolders } from '../../helpers/excludeFolders';
 import { IConfigeFile, IDirectoryFiles } from '../../types';
 import { ConfigService } from '../configService/cofig.service';
 import { IConfigService } from '../configService/cofig.service.interface';
@@ -22,11 +23,7 @@ export class FileManagementService implements IFileManagementService {
 	async getAllFiles(dir: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
 		files_ = files_ || {};
 		const allFiles = fs.readdirSync(dir);
-		const filteredFiles = allFiles
-			// TODO: refactor and in helpers (filter), get arr from config
-			.filter((file) => file != 'node_modules')
-			.filter((file) => file != '.git')
-			.filter((file) => file != 'dist');
+		const filteredFiles = excludeFolders(allFiles, this.config.exclusionFolders);
 
 		for (const i in filteredFiles) {
 			const path = dir + '/' + filteredFiles[i];
@@ -47,7 +44,6 @@ export class FileManagementService implements IFileManagementService {
 		const rootRepository = path.resolve();
 		const allFiles = await this.getAllFiles(rootRepository);
 
-		//TODO: in helpers (for)
 		for (let i = 0; i <= fileExtensions.length; i++) {
 			for (const fileName in allFiles) {
 				if (fileName.split('.').pop() === fileExtensions[i]) {
@@ -56,7 +52,6 @@ export class FileManagementService implements IFileManagementService {
 			}
 		}
 
-		// add checksum
 		for (const fileName in result) {
 			result[fileName].checksum = await this.generateChecksum(result[fileName].path).catch(
 				(err) => {
@@ -68,21 +63,6 @@ export class FileManagementService implements IFileManagementService {
 		}
 
 		return result;
-	}
-
-	// dont use?
-	async createListFilesDefinedExtension(): Promise<void> {
-		// const fileExtensions = this.configService.fileExtensions;
-		const fileContent = await this.getParticularFiles(['js', 'json']);
-		const filePath = 'fontsList.json';
-
-		try {
-			this.createFile(filePath, JSON.stringify(fileContent), (err) => {
-				this.logger.log(`File ${filePath} was successfully created`);
-			});
-		} catch (error) {
-			this.logger.error(`Error during creation ${filePath}`);
-		}
 	}
 
 	generateChecksum(path: string): Promise<string> {
@@ -119,7 +99,13 @@ export class FileManagementService implements IFileManagementService {
 			}
 		});
 
-		this.logger.log(`White list added. Config update successfully`);
+		if (Object.keys(this.config.whiteList).length === 0) {
+			this.logger.warn(
+				`The configuration file has been created, now it needs to be configured. Add the file extensions you would like to add to your white list to the FileExtensions array and call -g or --generate again`,
+			);
+		} else {
+			this.logger.log(`White list added. Config update successfully`);
+		}
 	}
 
 	createFile(

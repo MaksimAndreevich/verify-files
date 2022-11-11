@@ -17,13 +17,10 @@ export interface IFileManagementService {
 	 */
 	getParticularFiles: (fileExtensions: string[]) => Promise<IDirectoryFiles>;
 
-	/** Created fontList.json in root folder */
-	createListFilesDefinedExtension: () => Promise<void>;
-
 	/** Generate a whitelist in the config */
 	createWhiteList: () => void;
 
-	/** Create file */
+	/** Create file in repository */
 	createFile: (
 		path: string,
 		data: string | NodeJS.ArrayBufferView,
