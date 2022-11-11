@@ -23,6 +23,8 @@ export class App {
 		if (args.h || args['-help']) return this.printHelp();
 		if (args.g || args['-generate']) return this.generateWhiteList();
 		if (args.v || args['-verify']) return this.runVerify();
+
+		this.printHelp();
 	}
 
 	printHelp(): void {

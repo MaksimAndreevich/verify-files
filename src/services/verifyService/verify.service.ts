@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { DEFAULT_CONFIG } from '../../constants';
 import { IConfigeFile, IDirectoryFiles, IFileInfo } from '../../types';
 import { ConfigService } from '../configService/cofig.service';
@@ -25,6 +26,8 @@ export class VerifyService implements IVerifyService {
 		if (!hasWhiteList) return;
 
 		this.iterateWhiteList();
+
+		// TODO: return exeption с сообщением
 	}
 
 	hasWhiteList(): boolean {
@@ -59,7 +62,9 @@ export class VerifyService implements IVerifyService {
 
 		if (missedInRepo.length) {
 			this.logger.warn(
-				`The following ${missedInRepo.length} files from your whitelist are missing from your repository:`,
+				`The following ${chalk.bgRed(
+					missedInRepo.length + ' files',
+				)} from your whitelist are missing from your repository:`,
 			);
 			missedInRepo.forEach((file, i) => {
 				console.log(`${i + 1}. ${file.path}`);
@@ -74,7 +79,9 @@ export class VerifyService implements IVerifyService {
 
 		if (missedInConf.length) {
 			this.logger.warn(
-				`The following ${missedInConf.length} files from the repository are missing from your whitelist`,
+				`The following ${chalk.bgRed(
+					missedInConf.length + ' files',
+				)} from the repository are missing from your whitelist`,
 			);
 			missedInConf.forEach((file, i) => {
 				console.log(`${i + 1}. ${file.path}`);
@@ -84,9 +91,13 @@ export class VerifyService implements IVerifyService {
 
 	verifyChecksum(wlConf: IDirectoryFiles, wlRepo: IDirectoryFiles): void {
 		for (const file in wlConf) {
+			if (!wlRepo[file]?.checksum) return;
 			if (wlRepo[file].checksum !== wlConf[file].checksum) {
 				this.logger.warn(
-					`The checksum of file ${file} from your white sheet did not match the checksum of the same file from your repository`,
+					//выделить красным файл
+					`The checksum of file ${chalk.bgRed(
+						file,
+					)} from your white sheet did not match the checksum of the same file from your repository`,
 				);
 			}
 		}
