@@ -11,6 +11,7 @@ import { IVerifyService } from './verify.service.interface';
 
 export class VerifyService implements IVerifyService {
 	private config: IConfigeFile;
+	private collectedErrors: string[] = [];
 
 	constructor(
 		private configService: IConfigService = new ConfigService(),
@@ -21,13 +22,20 @@ export class VerifyService implements IVerifyService {
 		this.config = currentConfig || DEFAULT_CONFIG;
 	}
 
-	verify(): void {
+	async verify(): Promise<void> {
 		const hasWhiteList = this.hasWhiteList();
 		if (!hasWhiteList) return;
 
-		this.iterateWhiteList();
+		await this.iterateWhiteList();
 
-		// TODO: return exeption с сообщением
+		if (this.collectedErrors.length) {
+			let verificatonErrors = '\n';
+			verificatonErrors += this.collectedErrors.join('\n') + '\n';
+			process.exitCode = 1;
+			throw new Error(verificatonErrors);
+		}
+
+		this.logger.log('The white list verify was successful. no errors detected');
 	}
 
 	hasWhiteList(): boolean {
@@ -49,7 +57,6 @@ export class VerifyService implements IVerifyService {
 		this.verifyChecksum(whiteListConfig, whiteListRepo);
 	}
 
-	//TODO: refactoring
 	verifySurplus(wlConf: IDirectoryFiles, wlRepo: IDirectoryFiles): void {
 		const missedInRepo: IFileInfo[] = [];
 		const missedInConf: IFileInfo[] = [];
@@ -61,13 +68,13 @@ export class VerifyService implements IVerifyService {
 		}
 
 		if (missedInRepo.length) {
-			this.logger.warn(
+			this.collectedErrors.push(
 				`The following ${chalk.bgRed(
 					missedInRepo.length + ' files',
 				)} from your whitelist are missing from your repository:`,
 			);
 			missedInRepo.forEach((file, i) => {
-				console.log(`${i + 1}. ${file.path}`);
+				this.collectedErrors.push(`${i + 1}. ${file.path}`);
 			});
 		}
 
@@ -78,13 +85,13 @@ export class VerifyService implements IVerifyService {
 		}
 
 		if (missedInConf.length) {
-			this.logger.warn(
+			this.collectedErrors.push(
 				`The following ${chalk.bgRed(
 					missedInConf.length + ' files',
-				)} from the repository are missing from your whitelist`,
+				)} from the repository are missing from your whitelist:`,
 			);
 			missedInConf.forEach((file, i) => {
-				console.log(`${i + 1}. ${file.path}`);
+				this.collectedErrors.push(`${i + 1}. ${file.path}`);
 			});
 		}
 	}
@@ -93,8 +100,7 @@ export class VerifyService implements IVerifyService {
 		for (const file in wlConf) {
 			if (!wlRepo[file]?.checksum) return;
 			if (wlRepo[file].checksum !== wlConf[file].checksum) {
-				this.logger.warn(
-					//выделить красным файл
+				this.collectedErrors.push(
 					`The checksum of file ${chalk.bgRed(
 						file,
 					)} from your white sheet did not match the checksum of the same file from your repository`,
