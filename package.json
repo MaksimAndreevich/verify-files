@@ -30,7 +30,7 @@
 	"bugs": {
 		"url": "https://github.com/MaksimAndreevich/verify-files/issues"
 	},
-	"homepage": "https://github.com/MaksimAndreevich/verify-filess#readme",
+	"homepage": "https://github.com/MaksimAndreevich/verify-files#readme",
 	"devDependencies": {
 		"@types/jest": "^29.2.2",
 		"@types/node": "^18.11.7",
