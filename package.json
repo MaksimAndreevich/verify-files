@@ -1,12 +1,11 @@
 {
-	"name": "validate-files",
-	"version": "0.0.0",
-	"description": "Checking file compatibility for the repository",
-	"main": "main.ts",
+	"name": "verify-files",
+	"version": "0.0.5",
+	"description": "This package is a node cli. Its task is to check files in your repository for file ratios in your whitelist. You can add a white sheet manually or generate it automatically. After checking, the application completes its execution with code 1, detected non-matches will be passed to the error body.y",
+	"main": "./dist/main.js",
 	"bin": {
-		"verify-fonts": "main.ts"
+		"verify-files": "./dist/main.js"
 	},
-	"private": "true",
 	"scripts": {
 		"start": "node ./dist/main.js",
 		"dev": "nodemon",
@@ -17,21 +16,21 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/MaksimAndreevich/validate-font-files.git"
+		"url": "git+https://github.com/MaksimAndreevich/verify-files.git"
 	},
 	"keywords": [
-		"font",
+		"verify",
 		"lint",
 		"validate",
 		"files",
 		"cli"
 	],
 	"author": "Maksim Andreevich",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/MaksimAndreevich/validate-font-files/issues"
+		"url": "https://github.com/MaksimAndreevich/verify-files/issues"
 	},
-	"homepage": "https://github.com/MaksimAndreevich/validate-font-files#readme",
+	"homepage": "https://github.com/MaksimAndreevich/verify-filess#readme",
 	"devDependencies": {
 		"@types/node": "^18.11.7",
 		"@typescript-eslint/eslint-plugin": "^5.41.0",
