@@ -11,8 +11,6 @@ export interface IConfigService {
 	whiteList: IDirectoryFiles | null;
 
 	init: () => IConfigeFile | null;
-	createConfig: () => void;
-	generateDefaultConfig: () => void;
 	getCurrentConfig: () => IConfigeFile | void;
 	hasConfig: () => Promise<boolean>;
 }

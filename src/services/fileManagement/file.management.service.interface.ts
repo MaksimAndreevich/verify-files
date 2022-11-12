@@ -1,7 +1,8 @@
 import { NoParamCallback } from 'fs';
-import { IDirectoryFiles } from '../../types';
+import { IConfigeFile, IDirectoryFiles } from '../../types';
 
 export interface IFileManagementService {
+	config: IConfigeFile;
 	/**
 	 * Get all files from your directory
 	 * @param {string} dir - directory
@@ -19,6 +20,9 @@ export interface IFileManagementService {
 
 	/** Generate a whitelist in the config */
 	createWhiteList: () => void;
+
+	/** Generates a checksum for a file from your whitelist */
+	generateChecksum: (path: string) => Promise<string>;
 
 	/** Create file in repository */
 	createFile: (

@@ -11,7 +11,7 @@ import { IVerifyService } from './verify.service.interface';
 
 export class VerifyService implements IVerifyService {
 	private config: IConfigeFile;
-	private collectedErrors: string[] = [];
+	collectedErrors: string[] = [];
 
 	constructor(
 		private configService: IConfigService = new ConfigService(),

@@ -1,6 +1,5 @@
 import { BinaryToTextEncoding } from 'crypto';
 import fs, { promises } from 'fs';
-import { DEFAULT_CONFIG } from '../../constants';
 import { IConfigeFile, IDirectoryFiles } from '../../types';
 import { LoggerService } from '../logger/logger.service';
 import { IConfigService } from './cofig.service.interface';
@@ -28,36 +27,6 @@ export class ConfigService implements IConfigService {
 			return currentConfig;
 		} catch (error) {
 			return null;
-		}
-	}
-
-	// not used?
-	async createConfig(): Promise<void> {
-		const hasConfig = await this.hasConfig();
-		if (!hasConfig) {
-			this.generateDefaultConfig();
-		}
-
-		const config = this.getCurrentConfig();
-
-		if (!config) return;
-
-		this.fileExtensions = config.fileExtensions || [];
-		this.exclusionFolders = config.exclusionFolders || [];
-		this.algorithmCrypto = config.algorithm || 'md5';
-		this.encoding = config.encoding || 'hex';
-		this.whiteList = config.whiteList || {};
-
-		this.logger.log(`Config ${this.configPath} installed successfully`);
-	}
-
-	generateDefaultConfig(): void {
-		try {
-			const defautlConfig = DEFAULT_CONFIG;
-			fs.writeFileSync(this.configPath, JSON.stringify(defautlConfig));
-			this.logger.log(`Сonfig ${this.configPath} was created successfully`);
-		} catch (error: any) {
-			this.logger.error(`An error occurred when creating the default config: ${error.message}`);
 		}
 	}
 

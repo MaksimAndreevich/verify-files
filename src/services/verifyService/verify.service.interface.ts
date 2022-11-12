@@ -1,6 +1,8 @@
 import { IDirectoryFiles } from '../../types';
 
 export interface IVerifyService {
+	collectedErrors: string[];
+
 	/** Run verify */
 	verify: () => void;
 
