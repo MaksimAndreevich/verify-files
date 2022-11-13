@@ -16,10 +16,13 @@ export interface IFileManagementService {
 	 * @param {string[]} fileExtensions - array file extensions
 	 * @returns {IDirectoryFiles}  list of files in object {fileName: path}
 	 */
-	getParticularFiles: (fileExtensions: string[]) => Promise<IDirectoryFiles>;
+	getParticularFiles: (
+		fileExtensions: string[],
+		allFiles: IDirectoryFiles,
+	) => Promise<IDirectoryFiles>;
 
 	/** Generate a whitelist in the config */
-	createWhiteList: () => void;
+	createWhiteList: () => Promise<void>;
 
 	/** Generates a checksum for a file from your whitelist */
 	generateChecksum: (path: string) => Promise<string>;

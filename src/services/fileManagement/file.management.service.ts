@@ -32,17 +32,18 @@ export class FileManagementService implements IFileManagementService {
 				this.getAllFiles(path, files_);
 			} else {
 				files_[filteredFiles[i]] = {
-					path: path,
+					path: path.normalize(),
 				};
 			}
 		}
 		return files_;
 	}
 
-	async getParticularFiles(fileExtensions: string[]): Promise<IDirectoryFiles> {
+	async getParticularFiles(
+		fileExtensions: string[],
+		allFiles: IDirectoryFiles,
+	): Promise<IDirectoryFiles> {
 		const result: IDirectoryFiles = {};
-		const rootRepository = path.resolve();
-		const allFiles = await this.getAllFiles(rootRepository);
 
 		for (let i = 0; i <= fileExtensions.length; i++) {
 			for (const fileName in allFiles) {
@@ -83,7 +84,10 @@ export class FileManagementService implements IFileManagementService {
 	async createWhiteList(): Promise<void> {
 		if (!this.config) return;
 
-		const whiteList = await this.getParticularFiles(this.config.fileExtensions);
+		const rootRepository = path.resolve().normalize();
+		const allFiles = await this.getAllFiles(rootRepository);
+
+		const whiteList = await this.getParticularFiles(this.config.fileExtensions, allFiles);
 		const newConfig = Object.assign(this.config, { whiteList });
 
 		for (const fileName in whiteList) {
@@ -92,12 +96,7 @@ export class FileManagementService implements IFileManagementService {
 					`Perhaps checksums will be missing from your white list. Check your configuration`,
 				);
 		}
-
-		this.createFile(this.configService.configPath, JSON.stringify(newConfig), (err) => {
-			if (err) {
-				return this.logger.error(`Error when creating a white list ${err}`);
-			}
-		});
+		this.createFile(this.configService.configPath, JSON.stringify(newConfig));
 
 		if (Object.keys(this.config.whiteList).length === 0) {
 			this.logger.warn(
@@ -108,11 +107,7 @@ export class FileManagementService implements IFileManagementService {
 		}
 	}
 
-	createFile(
-		path: string,
-		data: string | NodeJS.ArrayBufferView,
-		callback: fs.NoParamCallback,
-	): void {
-		fs.writeFile(path, data, callback);
+	createFile(path: string, data: string | NodeJS.ArrayBufferView): void {
+		fs.writeFileSync(path, data);
 	}
 }

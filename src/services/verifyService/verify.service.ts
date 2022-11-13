@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import path from 'path';
 import { DEFAULT_CONFIG } from '../../constants';
 import { IConfigeFile, IDirectoryFiles, IFileInfo } from '../../types';
 import { ConfigService } from '../configService/cofig.service';
@@ -49,8 +50,12 @@ export class VerifyService implements IVerifyService {
 
 	async iterateWhiteList(): Promise<void> {
 		const whiteListConfig = this.config.whiteList;
+
+		const rootRepository = path.resolve();
+		const allFiles = await this.fileManagementServise.getAllFiles(rootRepository);
 		const whiteListRepo = await this.fileManagementServise.getParticularFiles(
 			this.config.fileExtensions,
+			allFiles,
 		);
 
 		this.verifySurplus(whiteListConfig, whiteListRepo);

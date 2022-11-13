@@ -1,1 +1,9 @@
-/vscode
+/.vscode
+/src/coverage
+.rettierrc
+.eslintrc
+.jest.config.ts
+tsconfig.json
+package-lock.json
+verify-files.config.json
+nodemon.json

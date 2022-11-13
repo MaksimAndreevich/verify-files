@@ -4,7 +4,7 @@ export interface IVerifyService {
 	collectedErrors: string[];
 
 	/** Run verify */
-	verify: () => void;
+	verify: () => Promise<void>;
 
 	/** Checking if there is a white list in your configuration */
 	hasWhiteList: () => boolean;
