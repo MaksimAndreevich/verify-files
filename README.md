@@ -6,6 +6,7 @@ How to install
 -----------------------------------
 ```
 npm i verify-files
+yarn add verify-files
 ```
 
 Commands
