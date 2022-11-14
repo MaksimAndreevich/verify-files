@@ -20,7 +20,15 @@ export class FileManagementService implements IFileManagementService {
 		this.config = currentConfig || DEFAULT_CONFIG;
 	}
 
-	async getAllFiles(dir: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
+	async getAllFiles(dir_: string, files_: IDirectoryFiles = {}): Promise<IDirectoryFiles> {
+		let dir = dir_;
+
+		//TODO: refactoring
+		if (dir.includes('\\')) {
+			dir = dir.replaceAll('\\\\', '/\\/');
+			dir = dir.replaceAll('/', '\\');
+		}
+
 		files_ = files_ || {};
 		const allFiles = fs.readdirSync(dir);
 		const filteredFiles = excludeFolders(allFiles, this.config.exclusionFolders);
@@ -84,7 +92,14 @@ export class FileManagementService implements IFileManagementService {
 	async createWhiteList(): Promise<void> {
 		if (!this.config) return;
 
-		const rootRepository = path.resolve().normalize();
+		let rootRepository = path.resolve().normalize();
+
+		//TODO: refactoring
+		if (rootRepository.includes('\\')) {
+			rootRepository = rootRepository.replaceAll('\\\\', '/\\/');
+			rootRepository = rootRepository.replaceAll('/', '\\');
+		}
+
 		const allFiles = await this.getAllFiles(rootRepository);
 
 		const whiteList = await this.getParticularFiles(this.config.fileExtensions, allFiles);
