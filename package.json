@@ -1,6 +1,6 @@
 {
 	"name": "verify-files",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "This package is a node cli. Its task is to check files in your repository for file ratios in your whitelist. You can add a white sheet manually or generate it automatically. After checking, the application completes its execution with code 1, detected non-matches will be passed to the error body.y",
 	"main": "./dist/src/main.js",
 	"bin": {
@@ -54,8 +54,5 @@
 		"crypto": "^1.0.1",
 		"dedent-js": "^1.0.1",
 		"tslog": "^3.3.4"
-	},
-	"publishConfig": {
-		"registry": "http://localhost:4873"
 	}
 }
